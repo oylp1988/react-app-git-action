@@ -7,20 +7,29 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Get Host Name
+        run: echo "The host is ${{ secrets.REMOTE_HOST }}"
+
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Install and Build
-        run: |
-          npm install
-          npm run build
+      - name: Install node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.0.0
+
+      - name: Install
+        run: npm install
+
+      - name: Build
+        run: npm run build
 
       - name: Deploy
         uses: easingthemes/ssh-deploy@v2.1.1
         env:
           SSH_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-          ARGS: "-avzr --delete"
-          SOURCE: "dist"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: "ubuntu"
-          TARGET: "/www/wwwroot"
+          ARGS: "-avzr --delete"
+          SOURCE: "build"
+          TARGET: "/home/ubuntu/"
