@@ -1,6 +1,6 @@
 {
   "name": "react-app-git-action",
-  "homepage": "https://oylp1988.github.io/react-app-git-action",
+  "homepage": ".",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
