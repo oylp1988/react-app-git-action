@@ -1,9 +1,35 @@
-name: React-Jobs
-on: [push]
+name: GitHub Actions Build and Deploy
+on:
+  push:
+    branches:
+      - master
 jobs:
   build:
-    # The type of runner that the job will run on
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
-      - name: Say Hello World
-        run: echo Hello, world!
+      - name: Get Host Name
+        run: echo "The host is ${{ secrets.REMOTE_HOST }}"
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.0.0
+
+      - name: Install
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy
+        uses: easingthemes/ssh-deploy@v2.1.1
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: "ubuntu"
+          ARGS: "-avzr --delete"
+          SOURCE: "build"
+          TARGET: "/var/www/react-git-action"
